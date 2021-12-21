@@ -104,13 +104,12 @@ public class FairQueue<T extends Queueable> {
         list.clear();
     }
     
-    public int shuffle(long identifier)
+    public int shuffle()
     {
         List<Integer> iset = new ArrayList<>();
         for(int i=0; i<list.size(); i++)
         {
-            if(list.get(i).getIdentifier()==identifier)
-                iset.add(i);
+            iset.add(i);
         }
         for(int j=0; j<iset.size(); j++)
         {
@@ -140,5 +139,10 @@ public class FairQueue<T extends Queueable> {
         T item = list.remove(from);
         list.add(to, item);
         return item;
+    }
+
+    @Override
+    public String toString() {
+        return "list=" + list;
     }
 }

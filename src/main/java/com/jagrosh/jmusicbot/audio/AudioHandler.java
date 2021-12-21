@@ -37,6 +37,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 
@@ -197,15 +198,22 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     // Formatting
     public Message getNowPlaying(JDA jda)
     {
+        Guild guild = guild(jda);
+        Member member =  guild.getSelfMember();
         if(isMusicPlaying(jda))
         {
-            Guild guild = guild(jda);
+
             AudioTrack track = audioPlayer.getPlayingTrack();
             MessageBuilder mb = new MessageBuilder();
             mb.append(FormatUtil.filter(manager.getBot().getConfig().getSuccess()+" **Now Playing in "+guild.getSelfMember().getVoiceState().getChannel().getAsMention()+"...**"));
             EmbedBuilder eb = new EmbedBuilder();
             eb.setColor(guild.getSelfMember().getColor());
             RequestMetadata rm = getRequestMetadata();
+
+            if (track.getInfo().title.length() >= 32){
+                member.modifyNickname(track.getInfo().title.substring(0,32)).queue();
+            } else member.modifyNickname(track.getInfo().title).queue();
+
             if(rm.getOwner() != 0L)
             {
                 User u = guild.getJDA().getUserById(rm.user.id);
@@ -226,7 +234,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
 
             if(track instanceof YoutubeAudioTrack && manager.getBot().getConfig().useNPImages())
             {
-                eb.setThumbnail("https://img.youtube.com/vi/"+track.getIdentifier()+"/mqdefault.jpg");
+                eb.setImage("https://img.youtube.com/vi/"+track.getIdentifier()+"/mqdefault.jpg");
             }
             
             if(track.getInfo().author != null && !track.getInfo().author.isEmpty())
@@ -240,7 +248,11 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             
             return mb.setEmbed(eb.build()).build();
         }
-        else return null;
+
+        else {
+            member.modifyNickname(null).queue();
+            return null;
+        }
     }
     
     public Message getNoMusicPlaying(JDA jda)
@@ -319,4 +331,8 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     {
         return jda.getGuildById(guildId);
     }
+
+    /*public AudioTrack getTrack(){
+        return audioPlayer.getPlayingTrack();
+    }*/
 }

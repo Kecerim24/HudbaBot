@@ -49,8 +49,11 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/webjars/bowergithub/polymer/polymer/2.8.0/polymer-2.8.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/webjars/bowergithub/webcomponents/shadycss/1.9.1/shadycss-1.9.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/webjars/bowergithub/webcomponents/webcomponentsjs/2.0.0-beta.3/webcomponentsjs-2.0.0-beta.3.jar" path-in-jar="/" />
-      <element id="file-copy" path="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/reference.conf" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/github/jagrosh/JLyrics/-0f9ac5df83-1/JLyrics--0f9ac5df83-1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/intellij/annotations/7.0.3/annotations-7.0.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/solovyev/common-collections-multimap/1.0.3/common-collections-multimap-1.0.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/solovyev/common-core/1.0.3/common-core-1.0.3.jar" path-in-jar="/" />
+      <element id="file-copy" path="$PROJECT_DIR$/reference.conf" />
     </root>
   </artifact>
 </component>

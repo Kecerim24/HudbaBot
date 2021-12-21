@@ -111,7 +111,7 @@ public class JMusicBot
                         new ShuffleCmd(bot),
                         new SkipCmd(bot),
                         new LyricsCmd(bot),
-                        new SaveQueueCmd(bot),
+                        //new SaveQueueCmd(bot),
                         //new DeletePlaylistCmd(bot),
                         new SpotifyCmd(bot),
 

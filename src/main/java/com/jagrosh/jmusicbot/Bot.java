@@ -129,6 +129,7 @@ public class Bot
             return;
         shuttingDown = true;
         threadpool.shutdownNow();
+        getJDA().getGuilds().forEach(g -> g.getSelfMember().modifyNickname(null).queue()); // removes all nicknames
         if(jda.getStatus()!=JDA.Status.SHUTTING_DOWN)
         {
             jda.getGuilds().stream().forEach(g -> 

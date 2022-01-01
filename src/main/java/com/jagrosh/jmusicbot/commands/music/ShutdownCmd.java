@@ -13,33 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jagrosh.jmusicbot.commands.owner;
+package com.jagrosh.jmusicbot.commands.music;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
+import com.jagrosh.jmusicbot.commands.MusicCommand;
 import com.jagrosh.jmusicbot.commands.OwnerCommand;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class ShutdownCmd extends OwnerCommand
+public class ShutdownCmd extends MusicCommand
 {
     private final Bot bot;
     
     public ShutdownCmd(Bot bot)
     {
+        super(bot);
         this.bot = bot;
         this.name = "shutdown";
         this.help = "safely shuts down";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = false;
+        this.hidden = true;
     }
     
     @Override
-    protected void execute(CommandEvent event)
+    public void doCommand(CommandEvent event)
     {
-        event.replyWarning("Shutting down...");
-        bot.shutdown();
+        if (event.getAuthor().equals(bot.getJDA().getUserById(bot.getConfig().getOwnerId()))) // lidl owner command
+        {
+            event.replyWarning("Shutting down...");
+            bot.shutdown();
+        }
     }
 }

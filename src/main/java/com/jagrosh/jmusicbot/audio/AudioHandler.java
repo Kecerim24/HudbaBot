@@ -48,14 +48,17 @@ import net.dv8tion.jda.api.entities.User;
 public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
 {
     private final FairQueue<QueuedTrack> queue = new FairQueue<>();
+    private final FairQueue<QueuedTrack> hardQueue = new FairQueue<>();
     private final List<AudioTrack> defaultQueue = new LinkedList<>();
     private final Set<String> votes = new HashSet<>();
+
     
     private final PlayerManager manager;
     private final AudioPlayer audioPlayer;
     private final long guildId;
     
     private AudioFrame lastFrame;
+    private AudioTrack previousTrack;
 
     protected AudioHandler(PlayerManager manager, Guild guild, AudioPlayer player)
     {
@@ -74,10 +77,16 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         else
         {
             queue.addAt(0, qtrack);
+            hardQueue.addAt(0, qtrack);
             return 0;
         }
     }
-    
+
+    public void playNow(AudioTrack aTrack){
+        audioPlayer.playTrack(aTrack);
+    }
+
+
     public int addTrack(QueuedTrack qtrack)
     {
         if(audioPlayer.getPlayingTrack()==null)
@@ -86,20 +95,41 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             return -1;
         }
         else
+            hardQueue.add(qtrack);
             return queue.add(qtrack);
+
     }
     
     public FairQueue<QueuedTrack> getQueue()
     {
         return queue;
     }
-    
+
+    public FairQueue<QueuedTrack> getHardQueue() {
+        return hardQueue;
+    }
+
     public void stopAndClear()
     {
         queue.clear();
         defaultQueue.clear();
+        hardQueue.clear();
         audioPlayer.stopTrack();
         //current = null;
+    }
+
+    public int unskip(){
+        QueuedTrack np = new QueuedTrack(audioPlayer.getPlayingTrack().makeClone(), getRequestMetadata());
+
+        for(int i = 1; i<hardQueue.size(); i++){
+            if (queue.getList().contains(hardQueue.get(i))){
+                audioPlayer.stopTrack();
+                addTrackToFront(hardQueue.get(i-1));
+                return 1;
+            }
+        }
+        addTrackToFront(np);
+        return 0;
     }
     
     public boolean isMusicPlaying(JDA jda)
@@ -157,6 +187,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) 
     {
+
         RepeatMode repeatMode = manager.getBot().getSettingsManager().getSettings(guildId).getRepeatMode();
         // if the track ended normally, and we're in repeat mode, re-add it to the queue
         if(endReason==AudioTrackEndReason.FINISHED && repeatMode != RepeatMode.OFF)
@@ -180,11 +211,13 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
                 player.setPaused(false);
             }
         }
+
         else
         {
             QueuedTrack qt = queue.pull();
             player.playTrack(qt.getTrack());
         }
+        guild(manager.getBot().getJDA()).getSelfMember().modifyNickname(null).queue();
     }
 
     @Override
@@ -192,6 +225,12 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     {
         votes.clear();
         manager.getBot().getNowplayingHandler().onTrackUpdate(guildId, track, this);
+        String title = track.getInfo().title;
+
+        if (title.length() >= 32){
+            title = title.substring(0,32);
+        }
+        guild(manager.getBot().getJDA()).getSelfMember().modifyNickname(title).queue();
     }
 
     
@@ -210,9 +249,9 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             eb.setColor(guild.getSelfMember().getColor());
             RequestMetadata rm = getRequestMetadata();
 
-            if (track.getInfo().title.length() >= 32){
+            /*if (track.getInfo().title.length() >= 32){
                 member.modifyNickname(track.getInfo().title.substring(0,32)).queue();
-            } else member.modifyNickname(track.getInfo().title).queue();
+            } else member.modifyNickname(track.getInfo().title).queue();*/
 
             if(rm.getOwner() != 0L)
             {
@@ -250,7 +289,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         }
 
         else {
-            member.modifyNickname(null).queue();
+
             return null;
         }
     }

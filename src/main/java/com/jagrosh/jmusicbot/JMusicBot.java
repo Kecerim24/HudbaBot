@@ -114,6 +114,7 @@ public class JMusicBot
                         //new SaveQueueCmd(bot),
                         //new DeletePlaylistCmd(bot),
                         new SpotifyCmd(bot),
+                        //new UnskipCmd(bot),
 
                         new ForceRemoveCmd(bot),
                         new MoveTrackCmd(bot),

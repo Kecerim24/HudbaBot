@@ -121,6 +121,10 @@ public class FairQueue<T extends Queueable> {
         }
         return iset.size();
     }
+
+    public void unskip(T item){
+        list.add(0, item);
+    }
     
     public void skip(int number)
     {

@@ -20,8 +20,8 @@ import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jmusicbot.settings.RepeatMode;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.player.event.TrackEndEvent;
+import com.sedmelluq.discord.lavaplayer.track.*;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -48,17 +48,20 @@ import net.dv8tion.jda.api.entities.User;
 public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
 {
     private final FairQueue<QueuedTrack> queue = new FairQueue<>();
-    private final FairQueue<QueuedTrack> hardQueue = new FairQueue<>();
     private final List<AudioTrack> defaultQueue = new LinkedList<>();
     private final Set<String> votes = new HashSet<>();
+    private final TrackMarkerHandler tmh = new TrackMarkerHandler() {
+        @Override
+        public void handle(MarkerState state) {
 
-    
+        }
+    };
+
     private final PlayerManager manager;
     private final AudioPlayer audioPlayer;
     private final long guildId;
     
     private AudioFrame lastFrame;
-    private AudioTrack previousTrack;
 
     protected AudioHandler(PlayerManager manager, Guild guild, AudioPlayer player)
     {
@@ -71,13 +74,13 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     {
         if(audioPlayer.getPlayingTrack()==null)
         {
+            qtrack.getTrack().setMarker(new TrackMarker(11, tmh));
             audioPlayer.playTrack(qtrack.getTrack());
             return -1;
         }
         else
         {
             queue.addAt(0, qtrack);
-            hardQueue.addAt(0, qtrack);
             return 0;
         }
     }
@@ -95,8 +98,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             return -1;
         }
         else
-            hardQueue.add(qtrack);
-            return queue.add(qtrack);
+            return queue.betterADD(qtrack);
 
     }
     
@@ -105,31 +107,14 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         return queue;
     }
 
-    public FairQueue<QueuedTrack> getHardQueue() {
-        return hardQueue;
-    }
 
     public void stopAndClear()
     {
         queue.clear();
         defaultQueue.clear();
-        hardQueue.clear();
+        ;
         audioPlayer.stopTrack();
         //current = null;
-    }
-
-    public int unskip(){
-        QueuedTrack np = new QueuedTrack(audioPlayer.getPlayingTrack().makeClone(), getRequestMetadata());
-
-        for(int i = 1; i<hardQueue.size(); i++){
-            if (queue.getList().contains(hardQueue.get(i))){
-                audioPlayer.stopTrack();
-                addTrackToFront(hardQueue.get(i-1));
-                return 1;
-            }
-        }
-        addTrackToFront(np);
-        return 0;
     }
     
     public boolean isMusicPlaying(JDA jda)
@@ -209,6 +194,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
                 // unpause, in the case when the player was paused and the track has been skipped.
                 // this is to prevent the player being paused next time it's being used.
                 player.setPaused(false);
+                guild(manager.getBot().getJDA()).getSelfMember().modifyNickname(null).queue();
             }
         }
 
@@ -217,7 +203,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             QueuedTrack qt = queue.pull();
             player.playTrack(qt.getTrack());
         }
-        guild(manager.getBot().getJDA()).getSelfMember().modifyNickname(null).queue();
+
     }
 
     @Override

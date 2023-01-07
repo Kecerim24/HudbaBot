@@ -15,9 +15,13 @@
  */
 package com.jagrosh.jmusicbot;
 
+import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
+
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -25,6 +29,7 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -38,10 +43,12 @@ import org.slf4j.LoggerFactory;
 public class Listener extends ListenerAdapter
 {
     private final Bot bot;
+    private final Command[] commands;
     
-    public Listener(Bot bot)
+    public Listener(Bot bot, Command[] commands)
     {
         this.bot = bot;
+        this.commands = commands;
     }
     
     @Override
@@ -110,7 +117,41 @@ public class Listener extends ListenerAdapter
     {
         credit(event.getJDA());
     }
-    
+
+    @Override
+    public void onSlashCommand(@NotNull SlashCommandEvent event) {
+        if (event.getName().equals("help")){
+            event.deferReply().queue();
+
+            StringBuilder builder = new StringBuilder("**"+bot.getJDA().getSelfUser().getName()+"** commands:\n");
+            Command.Category category = null;
+            String prefix = bot.getConfig().getPrefix();
+            for(Command command : commands)
+            {
+                if(!command.isHidden() && (!command.isOwnerCommand()))
+                {
+                    if(!Objects.equals(category, command.getCategory()))
+                    {
+                        category = command.getCategory();
+                        builder.append("\n\n  __").append(category==null ? "No Category" : category.getName()).append("__:\n");
+                    }
+                    builder.append("\n`").append(prefix).append(command.getName())
+                            .append(command.getArguments()==null ? "`" : " "+command.getArguments()+"`")
+                            .append(" - ").append(command.getHelp());
+                }
+            }
+            User owner = event.getJDA().getUserById(bot.getConfig().getOwnerId());
+            if(owner!=null)
+            {
+                builder.append("\n\nFor additional help, contact **").append(owner.getName()).append("**#").append(owner.getDiscriminator());
+
+            }
+            event.getUser().openPrivateChannel().queue(pc -> pc.sendMessage(builder.toString()).queue());
+
+            event.getHook().sendMessage("Help message delivered!").queue();
+        }
+    }
+
     // make sure people aren't adding clones to dbots
     private void credit(JDA jda)
     {

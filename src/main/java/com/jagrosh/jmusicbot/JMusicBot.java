@@ -15,6 +15,7 @@
  */
 package com.jagrosh.jmusicbot;
 
+import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.*;
@@ -28,11 +29,15 @@ import com.jagrosh.jmusicbot.gui.GUI;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
@@ -86,7 +91,53 @@ public class JMusicBot
                                 RECOMMENDED_PERMS);
         aboutCommand.setIsAuthor(false);
         aboutCommand.setReplacementCharacter("\uD83C\uDFB6"); // 🎶
-        
+
+        Command[] commands = new Command[]{aboutCommand,
+                new PingCommand(),
+                new SettingsCmd(bot),
+
+                new NowplayingCmd(bot),
+                new PlayCmd(bot),
+                new PlaylistsCmd(bot),
+                new PlaylistCmd(bot),
+                new QueueCmd(bot),
+                new RemoveCmd(bot),
+                new SearchCmd(bot),
+                new SCSearchCmd(bot),
+                new ShuffleCmd(bot),
+                new SkipCmd(bot),
+                new LyricsCmd(bot),
+                //new SaveQueueCmd(bot),
+                //new DeletePlaylistCmd(bot),
+                new SpotifyCmd(bot),
+                //new UnskipCmd(bot),
+
+                new ForceRemoveCmd(bot),
+                new MoveTrackCmd(bot),
+                new PauseCmd(bot),
+                new PlaynextCmd(bot),
+                new RepeatCmd(bot),
+                new SkiptoCmd(bot),
+                new StopCmd(bot),
+                new VolumeCmd(bot),
+
+                new PrefixCmd(bot),
+                new SetdjCmd(bot),
+                new SkipratioCmd(bot),
+                new SettcCmd(bot),
+                new SetvcCmd(bot),
+
+                new AutoplaylistCmd(bot),
+                new DebugCmd(bot),
+                new SetavatarCmd(bot),
+                new SetgameCmd(bot),
+                new SetnameCmd(bot),
+                new SetstatusCmd(bot),
+                new ShutdownCmd(bot),
+                new ListGuilds(bot)};
+
+
+
         // set up the command client
         CommandClientBuilder cb = new CommandClientBuilder()
                 .setPrefix(config.getPrefix())
@@ -96,50 +147,9 @@ public class JMusicBot
                 .setHelpWord(config.getHelp())
                 .setLinkedCacheSize(200)
                 .setGuildSettingsManager(settings)
-                .addCommands(aboutCommand,
-                        new PingCommand(),
-                        new SettingsCmd(bot),
+                .addCommands(commands);
 
-                        new NowplayingCmd(bot),
-                        new PlayCmd(bot),
-                        new PlaylistsCmd(bot),
-                        new PlaylistCmd(bot),
-                        new QueueCmd(bot),
-                        new RemoveCmd(bot),
-                        new SearchCmd(bot),
-                        new SCSearchCmd(bot),
-                        new ShuffleCmd(bot),
-                        new SkipCmd(bot),
-                        new LyricsCmd(bot),
-                        //new SaveQueueCmd(bot),
-                        //new DeletePlaylistCmd(bot),
-                        new SpotifyCmd(bot),
-                        //new UnskipCmd(bot),
 
-                        new ForceRemoveCmd(bot),
-                        new MoveTrackCmd(bot),
-                        new PauseCmd(bot),
-                        new PlaynextCmd(bot),
-                        new RepeatCmd(bot),
-                        new SkiptoCmd(bot),
-                        new StopCmd(bot),
-                        new VolumeCmd(bot),
-                        
-                        new PrefixCmd(bot),
-                        new SetdjCmd(bot),
-                        new SkipratioCmd(bot),
-                        new SettcCmd(bot),
-                        new SetvcCmd(bot),
-                        
-                        new AutoplaylistCmd(bot),
-                        new DebugCmd(bot),
-                        new SetavatarCmd(bot),
-                        new SetgameCmd(bot),
-                        new SetnameCmd(bot),
-                        new SetstatusCmd(bot),
-                        new ShutdownCmd(bot),
-                        new ListGuilds(bot)
-                );
         if(config.useEval())
             cb.addCommand(new EvalCmd(bot));
         boolean nogame = false;
@@ -182,7 +192,7 @@ public class JMusicBot
                     .setActivity(nogame ? null : Activity.playing("loading..."))
                     .setStatus(config.getStatus()==OnlineStatus.INVISIBLE || config.getStatus()==OnlineStatus.OFFLINE 
                             ? OnlineStatus.INVISIBLE : OnlineStatus.DO_NOT_DISTURB)
-                    .addEventListeners(cb.build(), waiter, new Listener(bot))
+                    .addEventListeners(cb.build(), waiter, new Listener(bot, commands))
                     .setBulkDeleteSplittingEnabled(true)
                     .build();
             bot.setJDA(jda);
@@ -200,5 +210,6 @@ public class JMusicBot
                     + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         }
+        bot.getJDA().updateCommands().addCommands(new CommandData("help", "Sends help message to your Direct Messages")).queue();
     }
 }

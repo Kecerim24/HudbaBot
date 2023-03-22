@@ -107,7 +107,7 @@ public class JMusicBot
                         new PingCommand(),
                         new SettingsCmd(bot),
                         
-                        new LyricsCmd(bot),
+                        //new LyricsCmd(bot),
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
                         new PlaylistsCmd(bot),
@@ -117,6 +117,7 @@ public class JMusicBot
                         new SCSearchCmd(bot),
                         new ShuffleCmd(bot),
                         new SkipCmd(bot),
+                        new SpotifyCmd(bot),
 
                         new ForceRemoveCmd(bot),
                         new ForceskipCmd(bot),

@@ -89,7 +89,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             return -1;
         }
         else
-            return queue.add(qtrack);
+            return queue.betterADD(qtrack);
     }
     
     public FairQueue<QueuedTrack> getQueue()
@@ -166,7 +166,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         {
             QueuedTrack clone = new QueuedTrack(track.makeClone(), track.getUserData(RequestMetadata.class));
             if(repeatMode == RepeatMode.ALL)
-                queue.add(clone);
+                queue.betterADD(clone);
             else
                 queue.addAt(0, clone);
         }
@@ -181,6 +181,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
                 // unpause, in the case when the player was paused and the track has been skipped.
                 // this is to prevent the player being paused next time it's being used.
                 player.setPaused(false);
+                guild(manager.getBot().getJDA()).getSelfMember().modifyNickname(null).queue();
             }
         }
         else
@@ -195,6 +196,12 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     {
         votes.clear();
         manager.getBot().getNowplayingHandler().onTrackUpdate(guildId, track, this);
+        String title = track.getInfo().title;
+
+        if (title.length() >= 32){
+            title = title.substring(0,32);
+        }
+        guild(manager.getBot().getJDA()).getSelfMember().modifyNickname(title).queue();
     }
 
     

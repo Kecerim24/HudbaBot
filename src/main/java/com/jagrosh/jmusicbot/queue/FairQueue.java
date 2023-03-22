@@ -46,7 +46,25 @@ public class FairQueue<T extends Queueable> {
         list.add(lastIndex, item);
         return lastIndex;
     }
-    
+    public int betterADD(T item){
+        int lastIndex;
+        for(lastIndex=list.size()-1; lastIndex>-1; lastIndex--)
+            if(list.get(lastIndex).getIdentifier()==item.getIdentifier())
+                break;
+        lastIndex++;
+        set.clear();
+        for(; lastIndex<list.size(); lastIndex++)
+        {
+            if(set.contains(list.get(lastIndex).getIdentifier()))
+                break;
+            set.add(list.get(lastIndex).getIdentifier());
+        }
+
+        list.add(item);
+
+        return lastIndex;
+
+    }
     public void addAt(int index, T item)
     {
         if(index >= list.size())

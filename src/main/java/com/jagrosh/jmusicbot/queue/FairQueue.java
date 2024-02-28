@@ -46,6 +46,7 @@ public class FairQueue<T extends Queueable> {
         list.add(lastIndex, item);
         return lastIndex;
     }
+
     public int betterADD(T item){
         int lastIndex;
         for(lastIndex=list.size()-1; lastIndex>-1; lastIndex--)
@@ -65,6 +66,7 @@ public class FairQueue<T extends Queueable> {
         return lastIndex;
 
     }
+
     public void addAt(int index, T item)
     {
         if(index >= list.size())
@@ -122,7 +124,7 @@ public class FairQueue<T extends Queueable> {
         list.clear();
     }
     
-    public int shuffle(long identifier)
+    public int shuffle()
     {
         List<Integer> iset = new ArrayList<>();
         for(int i=0; i<list.size(); i++)
@@ -138,6 +140,10 @@ public class FairQueue<T extends Queueable> {
             list.set(second, temp);
         }
         return iset.size();
+    }
+
+    public void unskip(T item){
+        list.add(0, item);
     }
     
     public void skip(int number)
@@ -157,5 +163,10 @@ public class FairQueue<T extends Queueable> {
         T item = list.remove(from);
         list.add(to, item);
         return item;
+    }
+
+    @Override
+    public String toString() {
+        return "list=" + list;
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.jagrosh.jmusicbot;
 
+import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.*;
@@ -28,8 +29,12 @@ import com.jagrosh.jmusicbot.gui.GUI;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.security.auth.login.LoginException;
+
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -49,7 +54,7 @@ public class JMusicBot
                                 Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EXT_EMOJI,
                                 Permission.MANAGE_CHANNEL, Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE};
     public final static GatewayIntent[] INTENTS = {GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES};
-    
+
     /**
      * @param args the command line arguments
      */
@@ -65,7 +70,7 @@ public class JMusicBot
             }
         startBot();
     }
-    
+
     private static void startBot()
     {
         // create prompt to handle startup
@@ -81,7 +86,7 @@ public class JMusicBot
         if(!config.isValid())
             return;
         LOG.info("Loaded config from " + config.getConfigLocation());
-        
+
         // set up the listener
         EventWaiter waiter = new EventWaiter();
         SettingsManager settings = new SettingsManager();
@@ -93,7 +98,53 @@ public class JMusicBot
                                 RECOMMENDED_PERMS);
         aboutCommand.setIsAuthor(false);
         aboutCommand.setReplacementCharacter("\uD83C\uDFB6"); // 🎶
-        
+
+        Command[] commands = new Command[]{aboutCommand,
+                new PingCommand(),
+                new SettingsCmd(bot),
+
+                new NowplayingCmd(bot),
+                new PlayCmd(bot),
+                new PlaylistsCmd(bot),
+                new PlaylistCmd(bot),
+                new QueueCmd(bot),
+                new RemoveCmd(bot),
+                new SearchCmd(bot),
+                new SCSearchCmd(bot),
+                new ShuffleCmd(bot),
+                new SkipCmd(bot),
+                new LyricsCmd(bot),
+                //new SaveQueueCmd(bot),
+                //new DeletePlaylistCmd(bot),
+                new SpotifyCmd(bot),
+                //new UnskipCmd(bot),
+
+                new ForceRemoveCmd(bot),
+                new MoveTrackCmd(bot),
+                new PauseCmd(bot),
+                new PlaynextCmd(bot),
+                new RepeatCmd(bot),
+                new SkiptoCmd(bot),
+                new StopCmd(bot),
+                new VolumeCmd(bot),
+
+                new PrefixCmd(bot),
+                new SetdjCmd(bot),
+                new SkipratioCmd(bot),
+                new SettcCmd(bot),
+                new SetvcCmd(bot),
+
+                new AutoplaylistCmd(bot),
+                new DebugCmd(bot),
+                new SetavatarCmd(bot),
+                new SetgameCmd(bot),
+                new SetnameCmd(bot),
+                new SetstatusCmd(bot),
+                new ShutdownCmd(bot),
+                new ListGuilds(bot)};
+
+
+
         // set up the command client
         CommandClientBuilder cb = new CommandClientBuilder()
                 .setPrefix(config.getPrefix())
@@ -144,6 +195,7 @@ public class JMusicBot
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot)
                 );
+
         if(config.useEval())
             cb.addCommand(new EvalCmd(bot));
         boolean nogame = false;
@@ -174,7 +226,7 @@ public class JMusicBot
                         + "window, please run in nogui mode using the -Dnogui=true flag.");
             }
         }
-        
+
         // attempt to log in and start
         try
         {
@@ -184,7 +236,7 @@ public class JMusicBot
                     .setActivity(nogame ? null : Activity.playing("loading..."))
                     .setStatus(config.getStatus()==OnlineStatus.INVISIBLE || config.getStatus()==OnlineStatus.OFFLINE 
                             ? OnlineStatus.INVISIBLE : OnlineStatus.DO_NOT_DISTURB)
-                    .addEventListeners(cb.build(), waiter, new Listener(bot))
+                    .addEventListeners(cb.build(), waiter, new Listener(bot, commands))
                     .setBulkDeleteSplittingEnabled(true)
                     .build();
             bot.setJDA(jda);
@@ -208,5 +260,6 @@ public class JMusicBot
                     + "attempting to connect, please make sure you're connected to the internet");
             System.exit(1);
         }
+        bot.getJDA().updateCommands().addCommands(new CommandData("help", "Sends help message to your Direct Messages")).queue();
     }
 }

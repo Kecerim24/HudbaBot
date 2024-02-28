@@ -39,7 +39,7 @@ public class RepeatCmd extends DJCommand
     
     // override musiccommand's execute because we don't actually care where this is used
     @Override
-    protected void execute(CommandEvent event) 
+    public void execute(CommandEvent event)
     {
         String args = event.getArgs();
         RepeatMode value;

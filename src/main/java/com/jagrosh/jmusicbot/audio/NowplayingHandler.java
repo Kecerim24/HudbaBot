@@ -50,7 +50,6 @@ public class NowplayingHandler
     {
         bot.getThreadpool().scheduleWithFixedDelay(() -> updateAll(), 0, 5, TimeUnit.SECONDS);
     }
-    
     public void setLastNPMessage(Message m)
     {
         lastNP.put(m.getGuild().getIdLong(), new Pair<>(m.getTextChannel().getIdLong(), m.getIdLong()));

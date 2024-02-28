@@ -48,8 +48,7 @@ public class NowplayingHandler
     
     public void init()
     {
-        if(!bot.getConfig().useNPImages())
-            bot.getThreadpool().scheduleWithFixedDelay(() -> updateAll(), 0, 5, TimeUnit.SECONDS);
+        bot.getThreadpool().scheduleWithFixedDelay(() -> updateAll(), 0, 5, TimeUnit.SECONDS);
     }
     
     public void setLastNPMessage(Message m)

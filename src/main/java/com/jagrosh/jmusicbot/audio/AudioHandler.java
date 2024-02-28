@@ -15,7 +15,6 @@
  */
 package com.jagrosh.jmusicbot.audio;
 
-import com.jagrosh.jmusicbot.JMusicBot;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jmusicbot.settings.RepeatMode;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -183,7 +182,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         {
             QueuedTrack clone = new QueuedTrack(track.makeClone(), track.getUserData(RequestMetadata.class));
             if(repeatMode == RepeatMode.ALL)
-                queue.add(clone);
+                queue.betterADD(clone);
             else
                 queue.addAt(0, clone);
         }
@@ -261,7 +260,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
                 eb.setTitle(track.getInfo().title);
             }
 
-            if(track instanceof YoutubeAudioTrack && manager.getBot().getConfig().useNPImages())
+            if(track instanceof YoutubeAudioTrack)
             {
                 eb.setImage("https://img.youtube.com/vi/"+track.getIdentifier()+"/mqdefault.jpg");
             }

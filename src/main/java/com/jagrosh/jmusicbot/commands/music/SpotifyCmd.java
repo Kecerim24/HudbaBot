@@ -50,7 +50,7 @@ public class SpotifyCmd extends MusicCommand {
             args = args.replace("https://open.spotify.com/track/", "").replaceAll("\\?(.*)", "");
             String song = su.getTrack(args).getName();
             CommandEvent finalEvent = new CommandEvent(event.getEvent(), song, event.getClient());
-            event.reply(loadingEmoji + " Loading... `["+song+"]`", m -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), song, new SpotifyCmd.ResultHandler(m, finalEvent,false)));
+            event.reply(loadingEmoji + " Loading... `["+song+"]`", m -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), song, new ResultHandler(m, finalEvent,false)));
         }
         else if (args.contains("playlist")){
             args = args.replace("https://open.spotify.com/playlist/", "").replaceAll("\\?(.*)", "");
@@ -190,7 +190,7 @@ public class SpotifyCmd extends MusicCommand {
             if(ytsearch)
                 m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" No results found for `"+event.getArgs()+"`.")).queue();
             else
-                bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:"+event.getArgs(), new SpotifyCmd.ResultHandler(m,event,true));
+                bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:"+event.getArgs(), new ResultHandler(m,event,true));
         }
 
         @Override

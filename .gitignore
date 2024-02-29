@@ -4,6 +4,5 @@
 /test/
 /out/
 *.json
-*.txt
 nb*.xml
 /reference.conf

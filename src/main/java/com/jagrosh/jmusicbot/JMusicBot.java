@@ -37,6 +37,7 @@ import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
@@ -74,7 +75,7 @@ public class JMusicBot
     private static void startBot()
     {
         // create prompt to handle startup
-        Prompt prompt = new Prompt("JMusicBot");
+        Prompt prompt = new Prompt("HudbaBot");
         
         // startup checks
         OtherUtil.checkVersion(prompt);
@@ -158,7 +159,7 @@ public class JMusicBot
                         new PingCommand(),
                         new SettingsCmd(bot),
                         
-                        //new LyricsCmd(bot),
+                        new LyricsCmd(bot),
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
                         new PlaylistsCmd(bot),

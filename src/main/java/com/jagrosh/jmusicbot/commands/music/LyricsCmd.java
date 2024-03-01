@@ -23,6 +23,8 @@ import com.jagrosh.jmusicbot.commands.MusicCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 
+import java.util.regex.Pattern;
+
 /**
  *
  * @author John Grosh (john.a.grosh@gmail.com)
@@ -68,9 +70,10 @@ public class LyricsCmd extends MusicCommand
             }
 
             EmbedBuilder eb = new EmbedBuilder()
-                    .setAuthor(lyrics.getAuthor())
+                    .setAuthor((lyrics.getSource().equals("KaraokeTexty") ? lyrics.getAuthor().replaceAll("\\s+\\S+$", "") : lyrics.getAuthor()))
                     .setColor(event.getSelfMember().getColor())
                     .setTitle(lyrics.getTitle(), lyrics.getURL());
+            System.out.println(lyrics.getContent());
             if(lyrics.getContent().length()>15000)
             {
                 event.replyWarning("Lyrics for `" + title + "` found but likely not correct: " + lyrics.getURL());

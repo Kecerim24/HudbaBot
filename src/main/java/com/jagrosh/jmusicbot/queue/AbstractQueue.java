@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 John Grosh (jagrosh).
+ * Copyright 2022 John Grosh (jagrosh).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,61 +15,25 @@
  */
 package com.jagrosh.jmusicbot.queue;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
- * @author John Grosh (jagrosh)
+ * @author Wolfgang Schwendtbauer
  * @param <T>
  */
-public class FairQueue<T extends Queueable> extends AbstractQueue<T>
+public abstract class AbstractQueue<T extends Queueable>
 {
-    public FairQueue(AbstractQueue<T> queue)
+    protected AbstractQueue(AbstractQueue<T> queue)
     {
-        super(queue);
+        this.list = queue != null ? queue.getList() : new LinkedList<>();
     }
 
-    protected final Set<Long> set = new HashSet<>();
+    protected final List<T> list;
 
-    @Override
-    public int add(T item)
-    {
-        int lastIndex;
-        for(lastIndex=list.size()-1; lastIndex>-1; lastIndex--)
-            if(list.get(lastIndex).getIdentifier() == item.getIdentifier())
-                break;
-        lastIndex++;
-        set.clear();
-        for(; lastIndex<list.size(); lastIndex++)
-        {
-            if(set.contains(list.get(lastIndex).getIdentifier()))
-                break;
-            set.add(list.get(lastIndex).getIdentifier());
-        }
-        list.add(lastIndex, item);
-        return lastIndex;
-    }
-
-    public int betterADD(T item){
-        int lastIndex;
-        for(lastIndex=list.size()-1; lastIndex>-1; lastIndex--)
-            if(list.get(lastIndex).getIdentifier()==item.getIdentifier())
-                break;
-        lastIndex++;
-        set.clear();
-        for(; lastIndex<list.size(); lastIndex++)
-        {
-            if(set.contains(list.get(lastIndex).getIdentifier()))
-                break;
-            set.add(list.get(lastIndex).getIdentifier());
-        }
-
-        list.add(item);
-
-        return lastIndex;
-
-    }
+    public abstract int add(T item);
 
     public void addAt(int index, T item)
     {
@@ -79,13 +43,11 @@ public class FairQueue<T extends Queueable> extends AbstractQueue<T>
             list.add(index, item);
     }
 
-    public int size()
-    {
+    public int size() {
         return list.size();
     }
 
-    public T pull()
-    {
+    public T pull() {
         return list.remove(0);
     }
 
@@ -99,8 +61,7 @@ public class FairQueue<T extends Queueable> extends AbstractQueue<T>
         return list;
     }
 
-    public T get(int index)
-    {
+    public T get(int index) {
         return list.get(index);
     }
 
@@ -128,12 +89,13 @@ public class FairQueue<T extends Queueable> extends AbstractQueue<T>
         list.clear();
     }
 
-    public int shuffle()
+    public int shuffle(long identifier)
     {
         List<Integer> iset = new ArrayList<>();
         for(int i=0; i<list.size(); i++)
         {
-            iset.add(i);
+            if(list.get(i).getIdentifier()==identifier)
+                iset.add(i);
         }
         for(int j=0; j<iset.size(); j++)
         {
@@ -146,14 +108,11 @@ public class FairQueue<T extends Queueable> extends AbstractQueue<T>
         return iset.size();
     }
 
-    public void unskip(T item){
-        list.add(0, item);
-    }
-
     public void skip(int number)
     {
-        for(int i=0; i<number; i++)
-            list.remove(0);
+        if (number > 0) {
+            list.subList(0, number).clear();
+        }
     }
 
     /**
@@ -167,10 +126,5 @@ public class FairQueue<T extends Queueable> extends AbstractQueue<T>
         T item = list.remove(from);
         list.add(to, item);
         return item;
-    }
-
-    @Override
-    public String toString() {
-        return "list=" + list;
     }
 }

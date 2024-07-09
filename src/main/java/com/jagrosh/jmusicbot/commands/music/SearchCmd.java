@@ -37,12 +37,12 @@ import net.dv8tion.jda.api.entities.Message;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class SearchCmd extends MusicCommand 
+public class SearchCmd extends MusicCommand
 {
     protected String searchPrefix = "ytsearch:";
     private final OrderedMenu.Builder builder;
     private final String searchingEmoji;
-    
+
     public SearchCmd(Bot bot)
     {
         super(bot);
@@ -62,28 +62,28 @@ public class SearchCmd extends MusicCommand
                 .setTimeout(1, TimeUnit.MINUTES);
     }
     @Override
-    public void doCommand(CommandEvent event) 
+    public void doCommand(CommandEvent event)
     {
         if(event.getArgs().isEmpty())
         {
             event.replyError("Please include a query.");
             return;
         }
-        event.reply(searchingEmoji+" Searching... `["+event.getArgs()+"]`", 
+        event.reply(searchingEmoji+" Searching... `["+event.getArgs()+"]`",
                 m -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), searchPrefix + event.getArgs(), new ResultHandler(m,event)));
     }
-    
-    private class ResultHandler implements AudioLoadResultHandler 
+
+    private class ResultHandler implements AudioLoadResultHandler
     {
         private final Message m;
         private final CommandEvent event;
-        
+
         private ResultHandler(Message m, CommandEvent event)
         {
             this.m = m;
             this.event = event;
         }
-        
+
         @Override
         public void trackLoaded(AudioTrack track)
         {
@@ -97,7 +97,7 @@ public class SearchCmd extends MusicCommand
             int pos = handler.addTrack(new QueuedTrack(track, RequestMetadata.fromResultHandler(track, event)))+1;
             m.editMessage(FormatUtil.filter(event.getClient().getSuccess()+" Added **"+track.getInfo().title
                     +"** (`"+ TimeUtil.formatTime(track.getDuration())+"`) "+(pos==0 ? "to begin playing"
-                        : " to the queue at position "+pos))).queue();
+                    : " to the queue at position "+pos))).queue();
         }
 
         @Override
@@ -106,7 +106,7 @@ public class SearchCmd extends MusicCommand
             builder.setColor(event.getSelfMember().getColor())
                     .setText(FormatUtil.filter(event.getClient().getSuccess()+" Search results for `"+event.getArgs()+"`:"))
                     .setChoices(new String[0])
-                    .setSelection((msg,i) -> 
+                    .setSelection((msg,i) ->
                     {
                         AudioTrack track = playlist.getTracks().get(i-1);
                         if(bot.getConfig().isTooLong(track))
@@ -118,12 +118,12 @@ public class SearchCmd extends MusicCommand
                         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
                         int pos = handler.addTrack(new QueuedTrack(track, RequestMetadata.fromResultHandler(track, event)))+1;
                         event.replySuccess("Added **" + FormatUtil.filter(track.getInfo().title)
-                                + "** (`" + TimeUtil.formatTime(track.getDuration()) + "`) " + (pos==0 ? "to begin playing" 
-                                    : " to the queue at position "+pos));
+                                + "** (`" + TimeUtil.formatTime(track.getDuration()) + "`) " + (pos==0 ? "to begin playing"
+                                : " to the queue at position "+pos));
                     })
                     .setCancel((msg) -> {})
                     .setUsers(event.getAuthor())
-                    ;
+            ;
             for(int i=0; i<4 && i<playlist.getTracks().size(); i++)
             {
                 AudioTrack track = playlist.getTracks().get(i);
@@ -133,13 +133,13 @@ public class SearchCmd extends MusicCommand
         }
 
         @Override
-        public void noMatches() 
+        public void noMatches()
         {
             m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" No results found for `"+event.getArgs()+"`.")).queue();
         }
 
         @Override
-        public void loadFailed(FriendlyException throwable) 
+        public void loadFailed(FriendlyException throwable)
         {
             if(throwable.severity==Severity.COMMON)
                 m.editMessage(event.getClient().getError()+" Error loading: "+throwable.getMessage()).queue();

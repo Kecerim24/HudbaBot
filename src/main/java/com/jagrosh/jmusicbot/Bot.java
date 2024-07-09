@@ -29,9 +29,6 @@ import java.util.Objects;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -47,11 +44,11 @@ public class Bot
     private final PlaylistLoader playlists;
     private final NowplayingHandler nowplaying;
     private final AloneInVoiceHandler aloneInVoiceHandler;
-    
+
     private boolean shuttingDown = false;
     private JDA jda;
     private GUI gui;
-    
+
     public Bot(EventWaiter waiter, BotConfig config, SettingsManager settings)
     {
         this.waiter = waiter;
@@ -67,37 +64,36 @@ public class Bot
         this.aloneInVoiceHandler.init();
     }
 
-
     public BotConfig getConfig()
     {
         return config;
     }
-    
+
     public SettingsManager getSettingsManager()
     {
         return settings;
     }
-    
+
     public EventWaiter getWaiter()
     {
         return waiter;
     }
-    
+
     public ScheduledExecutorService getThreadpool()
     {
         return threadpool;
     }
-    
+
     public PlayerManager getPlayerManager()
     {
         return players;
     }
-    
+
     public PlaylistLoader getPlaylistLoader()
     {
         return playlists;
     }
-    
+
     public NowplayingHandler getNowplayingHandler()
     {
         return nowplaying;
@@ -107,19 +103,19 @@ public class Bot
     {
         return aloneInVoiceHandler;
     }
-    
+
     public JDA getJDA()
     {
         return jda;
     }
-    
+
     public void closeAudioConnection(long guildId)
     {
         Guild guild = jda.getGuildById(guildId);
         if(guild!=null)
             threadpool.submit(() -> guild.getAudioManager().closeAudioConnection());
     }
-    
+
     public void resetGame()
     {
         Activity game = config.getGame()==null || config.getGame().getName().equalsIgnoreCase("none") ? null : config.getGame();
@@ -133,10 +129,9 @@ public class Bot
             return;
         shuttingDown = true;
         threadpool.shutdownNow();
-        getJDA().getGuilds().forEach(g -> g.getSelfMember().modifyNickname(null).queue()); // removes all nicknames
         if(jda.getStatus()!=JDA.Status.SHUTTING_DOWN)
         {
-            jda.getGuilds().stream().forEach(g -> 
+            jda.getGuilds().stream().forEach(g ->
             {
                 g.getAudioManager().closeAudioConnection();
                 AudioHandler ah = (AudioHandler)g.getAudioManager().getSendingHandler();
@@ -157,7 +152,7 @@ public class Bot
     {
         this.jda = jda;
     }
-    
+
     public void setGUI(GUI gui)
     {
         this.gui = gui;

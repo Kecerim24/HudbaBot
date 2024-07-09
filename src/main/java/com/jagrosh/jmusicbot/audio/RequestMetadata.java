@@ -30,16 +30,16 @@ import java.util.regex.Pattern;
 public class RequestMetadata
 {
     public static final RequestMetadata EMPTY = new RequestMetadata(null, null);
-    
+
     public final UserInfo user;
     public final RequestInfo requestInfo;
-    
+
     public RequestMetadata(User user, RequestInfo requestInfo)
     {
         this.user = user == null ? null : new UserInfo(user.getIdLong(), user.getName(), user.getDiscriminator(), user.getEffectiveAvatarUrl());
         this.requestInfo = requestInfo;
     }
-    
+
     public long getOwner()
     {
         return user == null ? 0L : user.id;
@@ -49,7 +49,7 @@ public class RequestMetadata
     {
         return new RequestMetadata(event.getAuthor(), new RequestInfo(event.getArgs(), track.getInfo().uri));
     }
-    
+
     public static class RequestInfo
     {
         public final String query, url;
@@ -74,12 +74,12 @@ public class RequestMetadata
             return matcher.find() ? TimeUtil.parseUnitTime(matcher.group(1)) : 0;
         }
     }
-    
+
     public static class UserInfo
     {
         public final long id;
         public final String username, discrim, avatar;
-        
+
         private UserInfo(long id, String username, String discrim, String avatar)
         {
             this.id = id;

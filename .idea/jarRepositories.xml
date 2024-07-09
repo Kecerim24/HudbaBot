@@ -12,6 +12,11 @@
       <option name="url" value="https://jitpack.io" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="arbjergDev-snapshots" />
+      <option name="name" value="Lavalink Repository" />
+      <option name="url" value="https://maven.lavalink.dev/snapshots" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Maven Central repository" />
       <option name="url" value="https://repo1.maven.org/maven2" />
@@ -25,6 +30,11 @@
       <option name="id" value="central" />
       <option name="name" value="bintray" />
       <option name="url" value="https://jcenter.bintray.com" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="m2.duncte123.dev" />
+      <option name="name" value="m2-duncte123" />
+      <option name="url" value="https://m2.duncte123.dev/releases" />
     </remote-repository>
   </component>
 </project>

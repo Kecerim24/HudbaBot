@@ -40,14 +40,14 @@ public class AloneInVoiceHandler
     {
         this.bot = bot;
     }
-    
+
     public void init()
     {
         aloneTimeUntilStop = bot.getConfig().getAloneTimeUntilStop();
         if(aloneTimeUntilStop > 0)
             bot.getThreadpool().scheduleWithFixedDelay(() -> check(), 0, 5, TimeUnit.SECONDS);
     }
-    
+
     private void check()
     {
         Set<Long> toRemove = new HashSet<>();
@@ -93,6 +93,6 @@ public class AloneInVoiceHandler
         return guild.getAudioManager().getConnectedChannel().getMembers().stream()
                 .noneMatch(x ->
                         !x.getVoiceState().isDeafened()
-                        && !x.getUser().isBot());
+                                && !x.getUser().isBot());
     }
 }

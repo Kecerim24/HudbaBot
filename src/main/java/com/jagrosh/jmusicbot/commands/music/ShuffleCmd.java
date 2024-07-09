@@ -24,7 +24,7 @@ import com.jagrosh.jmusicbot.commands.MusicCommand;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class ShuffleCmd extends MusicCommand 
+public class ShuffleCmd extends MusicCommand
 {
     public ShuffleCmd(Bot bot)
     {
@@ -37,11 +37,11 @@ public class ShuffleCmd extends MusicCommand
     }
 
     @Override
-    public void doCommand(CommandEvent event) 
+    public void doCommand(CommandEvent event)
     {
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
-        int s = handler.getQueue().shuffle();
-        switch (s) 
+        int s = handler.getQueue().shuffle(event.getAuthor().getIdLong());
+        switch (s)
         {
             case 0:
                 event.replyError("You don't have any music in the queue to shuffle!");
@@ -54,5 +54,5 @@ public class ShuffleCmd extends MusicCommand
                 break;
         }
     }
-    
+
 }

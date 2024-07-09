@@ -94,11 +94,6 @@ public class FairQueue<T extends Queueable> extends AbstractQueue<T>
         return list.isEmpty();
     }
 
-    public List<T> getList()
-    {
-        return list;
-    }
-
     public T get(int index)
     {
         return list.get(index);
@@ -126,24 +121,6 @@ public class FairQueue<T extends Queueable> extends AbstractQueue<T>
     public void clear()
     {
         list.clear();
-    }
-
-    public int shuffle()
-    {
-        List<Integer> iset = new ArrayList<>();
-        for(int i=0; i<list.size(); i++)
-        {
-            iset.add(i);
-        }
-        for(int j=0; j<iset.size(); j++)
-        {
-            int first = iset.get(j);
-            int second = iset.get((int)(Math.random()*iset.size()));
-            T temp = list.get(first);
-            list.set(first, list.get(second));
-            list.set(second, temp);
-        }
-        return iset.size();
     }
 
     public void unskip(T item){

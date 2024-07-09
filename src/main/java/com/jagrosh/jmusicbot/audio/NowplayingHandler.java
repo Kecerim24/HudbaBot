@@ -39,27 +39,29 @@ public class NowplayingHandler
 {
     private final Bot bot;
     private final HashMap<Long,Pair<Long,Long>> lastNP; // guild -> channel,message
-    
+
     public NowplayingHandler(Bot bot)
     {
         this.bot = bot;
         this.lastNP = new HashMap<>();
     }
-    
+
     public void init()
     {
-        bot.getThreadpool().scheduleWithFixedDelay(() -> updateAll(), 0, 5, TimeUnit.SECONDS);
+        if(!bot.getConfig().useNPImages())
+            bot.getThreadpool().scheduleWithFixedDelay(() -> updateAll(), 0, 5, TimeUnit.SECONDS);
     }
+
     public void setLastNPMessage(Message m)
     {
         lastNP.put(m.getGuild().getIdLong(), new Pair<>(m.getTextChannel().getIdLong(), m.getIdLong()));
     }
-    
+
     public void clearLastNPMessage(Guild guild)
     {
         lastNP.remove(guild.getIdLong());
     }
-    
+
     private void updateAll()
     {
         Set<Long> toRemove = new HashSet<>();
@@ -85,11 +87,11 @@ public class NowplayingHandler
                 msg = handler.getNoMusicPlaying(bot.getJDA());
                 toRemove.add(guildId);
             }
-            try 
+            try
             {
                 tc.editMessageById(pair.getValue(), msg).queue(m->{}, t -> lastNP.remove(guildId));
-            } 
-            catch(Exception e) 
+            }
+            catch(Exception e)
             {
                 toRemove.add(guildId);
             }
@@ -109,7 +111,7 @@ public class NowplayingHandler
                 bot.resetGame();
         }
     }
-    
+
     public void onMessageDelete(Guild guild, long messageId)
     {
         Pair<Long,Long> pair = lastNP.get(guild.getIdLong());

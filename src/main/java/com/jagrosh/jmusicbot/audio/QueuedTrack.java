@@ -39,13 +39,13 @@ public class QueuedTrack implements Queueable
         if (this.track.isSeekable() && rm != null)
             track.setPosition(rm.requestInfo.startTimestamp);
     }
-    
+
     @Override
-    public long getIdentifier() 
+    public long getIdentifier()
     {
         return requestMetadata.getOwner();
     }
-    
+
     public AudioTrack getTrack()
     {
         return track;
@@ -57,7 +57,7 @@ public class QueuedTrack implements Queueable
     }
 
     @Override
-    public String toString() 
+    public String toString()
     {
         String entry = "`[" + TimeUtil.formatTime(track.getDuration()) + "]` ";
         AudioTrackInfo trackInfo = track.getInfo();

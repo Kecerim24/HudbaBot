@@ -50,7 +50,7 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/mozilla/rhino-engine/1.7.14/rhino-engine-1.7.14.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/mozilla/rhino/1.7.14/rhino-1.7.14.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.32/slf4j-api-1.7.32.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/se/michaelthelin/spotify/spotify-web-api-java/8.4.0/spotify-web-api-java-8.4.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/se/michaelthelin/spotify/spotify-web-api-java/7.3.0/spotify-web-api-java-7.3.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

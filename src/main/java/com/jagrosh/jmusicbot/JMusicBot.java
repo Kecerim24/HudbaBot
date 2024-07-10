@@ -229,7 +229,8 @@ public class JMusicBot
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot),
 
-                        new SpotifyCmd(bot)
+                        new SpotifyCmd(bot),
+                        new ListGuilds(bot)
                 );
 
         // enable eval if applicable

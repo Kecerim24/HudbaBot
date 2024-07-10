@@ -28,7 +28,7 @@ public class SpotifyUtil {
     private final ClientCredentialsRequest clientCredentialsRequest = spotifyApiClient.clientCredentials()
             .build();
 
-    public SpotifyApi getAccessToken() {
+    private SpotifyApi getAccessToken() {
 
         try {
             CompletableFuture<ClientCredentials> clientCredentialsFuture = clientCredentialsRequest.executeAsync();

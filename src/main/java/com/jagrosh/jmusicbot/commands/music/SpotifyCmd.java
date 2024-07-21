@@ -78,7 +78,7 @@ public class SpotifyCmd extends MusicCommand {
         }
         else if (args.contains("album")){
             args = args.replace("https://open.spotify.com/album/", "").replaceAll("\\?(.*)", "");
-            ArrayList<Pair<String, String>> album = su.getPlaylist(args);
+            ArrayList<Pair<String, String>> album = su.getAlbum(args);
             int albumSize = album.size();
             try {
                 album.forEach((pair) -> {

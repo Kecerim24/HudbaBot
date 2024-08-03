@@ -76,6 +76,28 @@ public class SpotifyCmd extends MusicCommand {
 
 
         }
+        else if (args.contains("album")){
+            args = args.replace("https://open.spotify.com/album/", "").replaceAll("\\?(.*)", "");
+            ArrayList<Pair<String, String>> album = su.getAlbum(args);
+            int albumSize = album.size();
+            try {
+                album.forEach((pair) -> {
+                    try {
+                        String song = pair.getKey() + " " + pair.getValue();
+                        CommandEvent finalEvent = new CommandEvent(event.getEvent(), song, event.getClient());
+                        bot.getPlayerManager().loadItemOrdered(event.getGuild(), song, new ResultHandler(null, finalEvent, false));
+
+                    } catch (Exception ex) {
+                        System.out.println("Error loading: " + ex.getCause());
+                    }
+                });
+            }catch (Exception e){ System.out.println(e.getMessage());}
+
+
+            event.replySuccess("Spotify album with `" + albumSize + "` songs loaded.");
+
+
+        }
         else event.replyError("Invalid link");
 
 
